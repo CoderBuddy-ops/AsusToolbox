@@ -2,7 +2,7 @@
 
 A **minimal**, **ultralight** alternative to Armoury Crate for ASUS laptops. Stripped down to essentials — fan control, performance modes, battery limit, keyboard backlight, and display settings — with a **4.3 MB** single-file executable.
 
-> ⚡ Built on top of [g-helper](https://github.com/seerge/g-helper), with GPU, overlay, audio visualizer, and chart controls removed for maximum simplicity.
+> ⚡ GPU overlay, audio visualizer, and chart controls removed for maximum simplicity.
 
 ---
 
