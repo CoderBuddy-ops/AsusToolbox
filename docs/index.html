@@ -2,13 +2,721 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Asus - Lightweight Armoury Crate Alternative for Asus Laptops</title>
-  <link rel="canonical" href="https://g-helper.com/">
-  <meta http-equiv="refresh" content="0; url=https://g-helper.com/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AsusToolbox — Ultralight Control Tool for ASUS Laptops</title>
+  <meta name="description" content="Minimal, ultralight alternative to Armoury Crate for ASUS laptops. Fan control, performance modes, battery limit, keyboard backlight — in just 4.3 MB.">
+  <meta property="og:title" content="AsusToolbox — Ultralight ASUS Laptop Control">
+  <meta property="og:description" content="4.3 MB. Zero bloat. Full control over fans, performance modes, battery, and keyboard backlight.">
+  <meta property="og:image" content="screenshot-dark.png">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="../favicon.ico" type="image/x-icon">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg-card: #161b22;
+      --bg-highlight: #1c2333;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --accent-green: #3fb950;
+      --accent-orange: #d29922;
+      --accent-red: #f85149;
+      --accent-purple: #bc8cff;
+      --gradient-start: #0d1117;
+      --gradient-end: #161b22;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      padding: 80px 0 60px;
+      text-align: center;
+      background: linear-gradient(180deg, #0d1117 0%, #161b22 100%);
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 50% 50%, rgba(88,166,255,0.06) 0%, transparent 50%);
+      animation: pulse 8s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+    .hero-content { position: relative; z-index: 1; }
+    .hero-logo {
+      width: 80px; height: 80px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 32px rgba(88,166,255,0.2);
+    }
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #58a6ff, #bc8cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+    .hero .tagline {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 32px;
+    }
+    .hero-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: rgba(63,185,80,0.12);
+      color: var(--accent-green);
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: 1px solid rgba(63,185,80,0.3);
+      margin-bottom: 32px;
+    }
+    .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #238636, #2ea043);
+      color: #fff;
+    }
+    .btn-primary:hover { background: linear-gradient(135deg, #2ea043, #3fb950); text-decoration: none; }
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--accent); text-decoration: none; }
+
+    .hero-image {
+      margin-top: 48px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+      max-width: 100%;
+    }
+
+    /* ── Stats Bar ── */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .stat { text-align: center; }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+
+    /* ── Section ── */
+    section { padding: 80px 0; }
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      margin-bottom: 48px;
+      max-width: 600px;
+    }
+    .section-center { text-align: center; }
+    .section-center .section-subtitle { margin: 0 auto 48px; }
+
+    /* ── Features Grid ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .feature-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .feature-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+    }
+    .feature-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
+    .feature-card p { color: var(--text-muted); font-size: 0.92rem; }
+
+    /* ── Comparison Table ── */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-card);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .comparison-table th {
+      background: var(--bg-highlight);
+      padding: 14px 20px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .comparison-table td {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .comparison-table .check { color: var(--accent-green); font-weight: 700; }
+    .comparison-table .cross { color: var(--accent-red); }
+    .comparison-table .highlight-col { background: rgba(88,166,255,0.05); }
+    .comparison-table .size-row td { font-weight: 700; }
+
+    /* ── Screenshots ── */
+    .screenshots {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .screenshot-wrap {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+    .screenshot-wrap img {
+      width: 100%;
+      display: block;
+      transition: transform 0.3s;
+    }
+    .screenshot-wrap:hover img { transform: scale(1.02); }
+    .screenshot-label {
+      text-align: center;
+      padding: 12px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      background: var(--bg-card);
+    }
+
+    /* ── What's Removed ── */
+    .removed-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .removed-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .removed-card .icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+    .removed-card h4 { font-size: 0.95rem; margin-bottom: 4px; }
+    .removed-card p { color: var(--text-muted); font-size: 0.85rem; }
+
+    /* ── Download Section ── */
+    .download-section {
+      background: linear-gradient(135deg, rgba(88,166,255,0.08), rgba(188,140,255,0.08));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px;
+      text-align: center;
+    }
+    .download-options {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+    .download-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      min-width: 280px;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+    .download-card:hover { border-color: var(--accent); }
+    .download-card.recommended {
+      border-color: var(--accent-green);
+      box-shadow: 0 0 20px rgba(63,185,80,0.1);
+    }
+    .download-card h3 { margin-bottom: 8px; }
+    .download-card .size {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin: 12px 0;
+    }
+    .download-card .desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; }
+    .badge-rec {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      background: rgba(63,185,80,0.15);
+      color: var(--accent-green);
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    /* ── Build Instructions ── */
+    .code-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      font-family: 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 0.88rem;
+      overflow-x: auto;
+      margin-top: 20px;
+      line-height: 1.8;
+    }
+    .code-block .comment { color: var(--text-muted); }
+    .code-block .cmd { color: var(--accent-green); }
+    .code-block .flag { color: var(--accent-orange); }
+    .code-block .val { color: var(--accent-purple); }
+
+    /* ── Conclusion ── */
+    .conclusion {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px;
+      text-align: center;
+    }
+    .conclusion h2 { margin-bottom: 16px; }
+    .conclusion p { color: var(--text-muted); max-width: 700px; margin: 0 auto 24px; font-size: 1.05rem; }
+    .conclusion-links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 24px; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    footer a { color: var(--text-muted); }
+    footer a:hover { color: var(--accent); }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+      .hero .tagline { font-size: 1rem; }
+      .screenshots { grid-template-columns: 1fr; }
+      .stats-bar { gap: 24px; }
+      .stat-value { font-size: 1.5rem; }
+      .download-options { flex-direction: column; align-items: center; }
+      .features-grid { grid-template-columns: 1fr; }
+      section { padding: 48px 0; }
+    }
+  </style>
 </head>
 <body>
-  <p>Redirecting to <a href="https://g-helper.com/">g-helper.com</a>&hellip;</p>
-  <script>window.location.replace("https://g-helper.com/");</script>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero">
+  <div class="container hero-content">
+    <img src="../favicon.ico" alt="AsusToolbox Logo" class="hero-logo">
+    <div class="hero-badge">⚡ Ultralight — Just 4.3 MB</div>
+    <h1>AsusToolbox</h1>
+    <p class="tagline">
+      The minimal, zero-bloat control tool for ASUS laptops.
+      Fan control, performance modes, battery protection, and keyboard backlight — everything you need, nothing you don't.
+    </p>
+    <div class="hero-buttons">
+      <a href="https://github.com/CoderBuddy-ops/AsusToolbox/releases" class="btn btn-primary">
+        ⬇ Download Latest
+      </a>
+      <a href="https://github.com/CoderBuddy-ops/AsusToolbox" class="btn btn-secondary">
+        ⭐ GitHub
+      </a>
+      <a href="https://github.com/CoderBuddy-ops/AsusToolbox#-building-from-source" class="btn btn-secondary">
+        🛠 Build from Source
+      </a>
+    </div>
+    <img src="app-hero.jpg" alt="AsusToolbox Application" class="hero-image">
+  </div>
+</section>
+
+<!-- ═══════════════ STATS ═══════════════ -->
+<div class="stats-bar">
+  <div class="container" style="display:flex;justify-content:center;gap:48px;flex-wrap:wrap;">
+    <div class="stat">
+      <div class="stat-value">4.3 MB</div>
+      <div class="stat-label">Executable Size</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">87 MB</div>
+      <div class="stat-label">RAM at Idle</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">28</div>
+      <div class="stat-label">Threads</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">0</div>
+      <div class="stat-label">Bloat Packages</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">4</div>
+      <div class="stat-label">Core Features</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ FEATURES ═══════════════ -->
+<section>
+  <div class="container">
+    <h2 class="section-title">What You Get</h2>
+    <p class="section-subtitle">Everything essential for controlling your ASUS laptop — stripped to the bones.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(88,166,255,0.12);">🌀</div>
+        <h3>Fan Control</h3>
+        <p>Automatic fan management with Silent, Balanced, and Turbo modes. Uses BIOS-level fan curves — same as Armoury Crate.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(188,140,255,0.12);">⚡</div>
+        <h3>Performance Modes</h3>
+        <p>Switch between Silent, Balanced, and Turbo with a single click or keyboard shortcut. Each mode maps to a Windows Power Plan.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(63,185,80,0.12);">🔋</div>
+        <h3>Battery Protection</h3>
+        <p>Set a charge limit (50%–100%) to preserve battery health. Automatic mode switching when on battery vs. plugged in.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(210,153,34,0.12);">🎨</div>
+        <h3>Keyboard Backlight</h3>
+        <p>Full Aura RGB control — static colors, breathing, strobing, and rainbow modes. Works with TUF, ROG, and Vivobook keyboards.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(248,81,73,0.12);">🖥️</div>
+        <h3>Display Control</h3>
+        <p>Screen brightness, HDR toggle, and refresh rate management. Clamshell mode support for external monitors.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(88,166,255,0.12);">🔧</div>
+        <h3>Hotkeys & Shortcuts</h3>
+        <p>Custom FN-key shortcuts, FN-Lock toggle, and quick access to performance modes. System tray icon for instant control.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ COMPARISON ═══════════════ -->
+<section style="background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="container">
+    <h2 class="section-title section-center">How It Compares</h2>
+    <p class="section-subtitle section-center">See why AsusToolbox is the leanest choice for ASUS laptop control.</p>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Armoury Crate</th>
+          <th>G-Helper</th>
+          <th class="highlight-col">AsusToolbox</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="size-row">
+          <td><strong>📦 Size</strong></td>
+          <td>~500 MB</td>
+          <td>~6 MB</td>
+          <td class="highlight-col" style="color:var(--accent-green);font-weight:700;">4.3 MB ✨</td>
+        </tr>
+        <tr>
+          <td>🌀 Fan Control</td>
+          <td class="check">✅</td>
+          <td class="check">✅</td>
+          <td class="highlight-col check">✅</td>
+        </tr>
+        <tr>
+          <td>⚡ Performance Modes</td>
+          <td class="check">✅</td>
+          <td class="check">✅</td>
+          <td class="highlight-col check">✅</td>
+        </tr>
+        <tr>
+          <td>🔋 Battery Charge Limit</td>
+          <td class="check">✅</td>
+          <td class="check">✅</td>
+          <td class="highlight-col check">✅</td>
+        </tr>
+        <tr>
+          <td>🎨 Keyboard Backlight</td>
+          <td class="check">✅</td>
+          <td class="check">✅</td>
+          <td class="highlight-col check">✅</td>
+        </tr>
+        <tr>
+          <td>🖥️ Display / Brightness</td>
+          <td class="check">✅</td>
+          <td class="check">✅</td>
+          <td class="highlight-col check">✅</td>
+        </tr>
+        <tr>
+          <td>🔧 Hotkeys</td>
+          <td class="check">✅</td>
+          <td class="check">✅</td>
+          <td class="highlight-col check">✅</td>
+        </tr>
+        <tr>
+          <td>🔄 GPU Mode Switching</td>
+          <td class="check">✅</td>
+          <td class="check">✅</td>
+          <td class="highlight-col cross">❌ Removed</td>
+        </tr>
+        <tr>
+          <td>📊 Overlay / FPS Monitor</td>
+          <td class="check">✅</td>
+          <td class="check">✅</td>
+          <td class="highlight-col cross">❌ Removed</td>
+        </tr>
+        <tr>
+          <td>🔊 Audio Visualizer</td>
+          <td class="check">✅</td>
+          <td class="check">✅</td>
+          <td class="highlight-col cross">❌ Removed</td>
+        </tr>
+        <tr>
+          <td>📈 Fan Curve Charts</td>
+          <td class="check">✅</td>
+          <td class="check">✅</td>
+          <td class="highlight-col cross">❌ Removed</td>
+        </tr>
+        <tr>
+          <td>🟣 Background Services</td>
+          <td style="color:var(--accent-red);">3+ services</td>
+          <td style="color:var(--accent-orange);">1 service</td>
+          <td class="highlight-col" style="color:var(--accent-green);font-weight:700;">Zero ✨</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════ SCREENSHOTS ═══════════════ -->
+<section>
+  <div class="container">
+    <h2 class="section-title section-center">Screenshots</h2>
+    <p class="section-subtitle section-center">Clean, native Windows Forms UI — dark and light modes.</p>
+    <div class="screenshots">
+      <div class="screenshot-wrap">
+        <img src="screenshot.png" alt="AsusToolbox Light Mode">
+        <div class="screenshot-label">☀️ Light Mode</div>
+      </div>
+      <div class="screenshot-wrap">
+        <img src="screenshot-dark.png" alt="AsusToolbox Dark Mode">
+        <div class="screenshot-label">🌙 Dark Mode</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ WHAT'S REMOVED ═══════════════ -->
+<section style="background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="container">
+    <h2 class="section-title section-center">What Was Removed</h2>
+    <p class="section-subtitle section-center">To achieve the ultralight 4.3 MB footprint, these heavy components were stripped out.</p>
+    <div class="removed-grid">
+      <div class="removed-card">
+        <div class="icon">🎮</div>
+        <div>
+          <h4>GPU Mode Control</h4>
+          <p>AMD/NVIDIA driver APIs, NvAPIWrapper, ADL2 — removed to cut ~200K lines of GPU management code.</p>
+        </div>
+      </div>
+      <div class="removed-card">
+        <div class="icon">📊</div>
+        <div>
+          <h4>Hardware Overlay</h4>
+          <p>ETW-based FPS monitoring and real-time sensor overlay — removed to eliminate Windows ETW dependencies.</p>
+        </div>
+      </div>
+      <div class="removed-card">
+        <div class="icon">🎵</div>
+        <div>
+          <h4>Audio Visualizer</h4>
+          <p>FftSharp FFT analysis + NAudio WASAPI — removed to eliminate audio processing overhead.</p>
+        </div>
+      </div>
+      <div class="removed-card">
+        <div class="icon">📈</div>
+        <div>
+          <h4>Fan Curve Charts</h4>
+          <p>WinForms.DataVisualization charts — removed to eliminate the heaviest UI dependency.</p>
+        </div>
+      </div>
+      <div class="removed-card">
+        <div class="icon">🎨</div>
+        <div>
+          <h4>Color Picker Controls</h4>
+          <p>RColorPicker, RColorButton — removed custom color picker widgets.</p>
+        </div>
+      </div>
+      <div class="removed-card">
+        <div class="icon">📦</div>
+        <div>
+          <h4>NuGet Packages</h4>
+          <p>4 heavy packages removed: NvAPIWrapper.Net, FftSharp, NAudio.Wasapi, WinForms.DataVisualization.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ DOWNLOAD ═══════════════ -->
+<section>
+  <div class="container">
+    <div class="download-section">
+      <h2 style="margin-bottom:8px;">Ready to Download</h2>
+      <p style="color:var(--text-muted);margin-bottom:32px;">Choose the version that works best for your system.</p>
+      <div class="download-options">
+        <div class="download-card recommended">
+          <div class="badge-rec">⭐ Recommended</div>
+          <h3>Framework-Dependent</h3>
+          <div class="size">4.3 MB</div>
+          <p class="desc">Requires .NET 8.0 Desktop Runtime<br>(free one-time install, pre-installed on most Win11)</p>
+          <a href="https://github.com/CoderBuddy-ops/AsusToolbox/releases/latest" class="btn btn-primary">Download AsusToolbox.exe</a>
+        </div>
+        <div class="download-card">
+          <h3>Self-Contained</h3>
+          <div class="size">149 MB</div>
+          <p class="desc">Includes the entire .NET runtime<br>Just run — no prerequisites needed</p>
+          <a href="https://github.com/CoderBuddy-ops/AsusToolbox/releases/latest" class="btn btn-secondary">Download (Self-Contained)</a>
+        </div>
+        <div class="download-card">
+          <h3>Build from Source</h3>
+          <div class="size" style="font-size:1.5rem;">~300 KB</div>
+          <p class="desc">Clone, build, and run locally<br>Requires .NET 8.0 SDK</p>
+          <a href="https://github.com/CoderBuddy-ops/AsusToolbox#-building-from-source" class="btn btn-secondary">View Instructions</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ BUILD FROM SOURCE ═══════════════ -->
+<section style="background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="container">
+    <h2 class="section-title">Build from Source</h2>
+    <p class="section-subtitle">Clone, build, and run in under a minute.</p>
+    <div class="code-block">
+      <span class="comment"># Clone the repository</span><br>
+      <span class="cmd">git clone</span> <span class="val">https://github.com/CoderBuddy-ops/AsusToolbox.git</span><br>
+      <span class="cmd">cd</span> AsusToolbox<br><br>
+      <span class="comment"># Build (Debug)</span><br>
+      <span class="cmd">dotnet build</span> Asus.csproj <span class="flag">-c</span> Debug <span class="flag">-p:</span>Platform=x64<br><br>
+      <span class="comment"># Publish — Framework-Dependent Single File (4.3 MB)</span><br>
+      <span class="cmd">dotnet publish</span> Asus.csproj <span class="flag">-c</span> Release <span class="flag">-p:</span>Platform=x64 \<br>
+      &nbsp;&nbsp;<span class="flag">-p:</span>PublishSingleFile=<span class="val">true</span> <span class="flag">-p:</span>SelfContained=<span class="val">false</span> <span class="flag">-r:</span>win-x64<br><br>
+      <span class="comment"># Publish — Self-Contained Single File (149 MB, no .NET needed)</span><br>
+      <span class="cmd">dotnet publish</span> Asus.csproj <span class="flag">-c</span> Release <span class="flag">-p:</span>Platform=x64 \<br>
+      &nbsp;&nbsp;<span class="flag">-p:</span>PublishSingleFile=<span class="val">true</span> <span class="flag">-p:</span>SelfContained=<span class="val">true</span> <span class="flag">-r:</span>win-x64
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CONCLUSION ═══════════════ -->
+<section>
+  <div class="container">
+    <div class="conclusion">
+      <h2>The Bottom Line</h2>
+      <p>
+        Armoury Crate is overkill — 500 MB of background services, telemetry, and features you'll never use.
+        G-Helper is great at 6 MB, but still bundles GPU control, audio processing, and chart libraries.
+      </p>
+      <p>
+        <strong>AsusToolbox</strong> takes it further: <strong>4.3 MB</strong>, zero background services, zero bloat packages.
+        Just the essentials — fans, modes, battery, keyboard backlight — running as a single tray icon process.
+        If you want a clean, minimal ASUS control tool that stays out of your way, this is it.
+      </p>
+      <p>
+        It's not trying to replace every Armoury Crate feature. It's trying to replace <em>Armoury Crate itself</em>
+        — with something that respects your system resources.
+      </p>
+      <div class="conclusion-links">
+        <a href="https://github.com/CoderBuddy-ops/AsusToolbox/releases" class="btn btn-primary">⬇ Download Now</a>
+        <a href="https://github.com/CoderBuddy-ops/AsusToolbox" class="btn btn-secondary">⭐ Star on GitHub</a>
+        <a href="https://github.com/CoderBuddy-ops/AsusToolbox/issues" class="btn btn-secondary">🐛 Report Issues</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer>
+  <div class="container">
+    <p>
+      AsusToolbox is a stripped-down fork of
+      <a href="https://github.com/seerge/g-helper" target="_blank">g-helper</a> by
+      <a href="https://github.com/serge" target="_blank">serge</a>.
+      All credit for the core ACPI control, fan management, and performance mode logic goes to the original author.
+    </p>
+    <p style="margin-top:8px;">
+      Built with ❤️ using C# / .NET 8 / Windows Forms &nbsp;|&nbsp;
+      <a href="https://github.com/CoderBuddy-ops/AsusToolbox/blob/main/LICENSE">License</a> &nbsp;|&nbsp;
+      <a href="https://github.com/CoderBuddy-ops/AsusToolbox">Source Code</a>
+    </p>
+  </div>
+</footer>
+
 </body>
 </html>

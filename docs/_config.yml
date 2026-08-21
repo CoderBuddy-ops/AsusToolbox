@@ -1,4 +1,12 @@
-title: Asus
-description: Asus is a lightweight, open-source Armoury Crate alternative for Asus ROG Zephyrus G14, G15, G16, M16, Flow X13, X16, Z13, TUF, Strix, Scar, Vivobook, Zenbook, ProArt, ROG Ally and other Asus laptops.
+title: AsusToolbox
+description: Ultralight, zero-bloat control tool for ASUS laptops. Fan control, performance modes, battery limit, and keyboard backlight in just 4.3 MB.
 plugins:
   - jemoji
+
+# GitHub Pages settings
+baseurl: ""
+url: "https://coderbuddy-ops.github.io"
+
+# SEO
+author: CoderBuddy-ops
+keywords: asus, laptop, fan control, performance mode, armoury crate alternative, rog, tuf, vivobook, ultralight
