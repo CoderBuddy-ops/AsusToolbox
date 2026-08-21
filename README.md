@@ -6,11 +6,6 @@ A **minimal**, **ultralight** alternative to Armoury Crate for ASUS laptops. Str
 
 ---
 
-<p align="center">
-  <img src="docs/screenshot-full.png" alt="AsusToolbox — Ultralight Control for ASUS Laptops" width="800" />
-</p>
-
----
 
 ## ✨ Why AsusToolbox?
 
@@ -63,13 +58,7 @@ A **minimal**, **ultralight** alternative to Armoury Crate for ASUS laptops. Str
 
 ---
 
-## 📸 Screenshots
 
-<p align="center">
-  <img src="docs/screenshot-full.png" alt="AsusToolbox Banner" width="800" />
-</p>
-
-> 📸 Screenshots coming soon — download and try it yourself!
 
 ---
 
