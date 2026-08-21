@@ -154,18 +154,6 @@ AsusToolbox/
 
 ---
 
-## 🤝 Credits
-
-This project is a stripped-down fork of [**g-helper**](https://github.com/seerge/g-helper) by [serge](https://github.com/serge). All credit for the core ACPI control, fan management, and performance mode logic goes to the original author.
-
----
-
 ## 📄 License
 
 See [LICENSE](LICENSE) for details.
-
----
-
-<p align="center">
-  <img src="docs/screenshot-dark.png" alt="AsusToolbox Dark Mode" width="800" />
-</p>
